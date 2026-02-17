@@ -368,4 +368,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-**Developed by Abdelhakim BENNOURI**
+**Developed by Abdelhakim Bennouri**
