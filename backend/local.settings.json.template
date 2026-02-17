@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "VISION_ENDPOINT": "https://YOUR_REGION.api.cognitive.microsoft.com/",
+    "VISION_KEY": "YOUR_VISION_API_KEY",
+    "STORAGE_CONNECTION_STRING": "YOUR_STORAGE_CONNECTION_STRING",
+    "STORAGE_CONTAINER_NAME": "images"
+  },
+  "Host": {
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}

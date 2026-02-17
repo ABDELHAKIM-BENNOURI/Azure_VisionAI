@@ -1,0 +1,9 @@
+azure-functions
+azure-storage-blob
+azure-cognitiveservices-vision-computervision
+azure-cognitiveservices-vision-face
+azure-ai-vision-imageanalysis
+msrest
+Pillow
+requests
+python-multipart

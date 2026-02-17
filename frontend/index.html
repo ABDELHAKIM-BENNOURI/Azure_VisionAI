@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Vision AI - Analyse d'Images Intelligente</title>
+    <meta name="description" content="Application d'analyse d'images intelligente utilisant Azure Cognitive Services pour la détection de visages, objets et description automatique">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Gradient -->
+    <div class="gradient-bg"></div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="12" fill="url(#gradient1)"/>
+                    <path d="M20 10L28 16V24L20 30L12 24V16L20 10Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="20" cy="20" r="4" fill="white"/>
+                    <defs>
+                        <linearGradient id="gradient1" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>Azure Vision AI</h1>
+            </div>
+            <p class="subtitle">Analyse d'images intelligente avec Azure Cognitive Services</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section glass-card">
+                <!-- Dashboard (Stats) -->
+                <div class="dashboard hidden" id="dashboard">
+                    <div class="stat-badge">
+                        <span class="stat-icon">📷</span>
+                        <div class="stat-info">
+                            <span class="stat-label">Analyses</span>
+                            <span class="stat-value" id="statAnalyses">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-icon">👥</span>
+                        <div class="stat-info">
+                            <span class="stat-label">Visages</span>
+                            <span class="stat-value" id="statFaces">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-icon">📦</span>
+                        <div class="stat-info">
+                            <span class="stat-label">Objets</span>
+                            <span class="stat-value" id="statObjects">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3>Glissez une image ici</h3>
+                    <p>ou cliquez pour sélectionner</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <button class="btn-primary" id="selectBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        Sélectionner une image
+                    </button>
+                </div>
+
+                <!-- Image Preview with Canvas Overlay -->
+                <div class="image-preview hidden" id="imagePreview">
+                    <div class="image-container">
+                        <img id="previewImg" src="" alt="Image à analyser">
+                        <canvas id="overlayCanvas"></canvas>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="btn-secondary" id="changeBtn">Changer l'image</button>
+                        <button class="btn-primary" id="analyzeBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            Analyser
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading hidden" id="loading">
+                    <div class="spinner"></div>
+                    <p>Analyse IA en cours...</p>
+                    <small>Florence 4.0 & Face API</small>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="resultsSection">
+                <!-- Description -->
+                <div class="result-card glass-card">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                        </svg>
+                        <h3>Description IA</h3>
+                    </div>
+                    <p class="description-text" id="descriptionText">-</p>
+                </div>
+
+                <!-- OCR Results (NEW) -->
+                <div class="result-card glass-card hidden" id="ocrCard">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 6.1H3"></path>
+                            <path d="M21 12.1H3"></path>
+                            <path d="M15.1 18.1H3"></path>
+                        </svg>
+                        <h3>Texte détecté (OCR)</h3>
+                        <span class="badge" id="ocrCount">0</span>
+                    </div>
+                    <div class="ocr-content" id="ocrContainer"></div>
+                </div>
+
+                <!-- Faces Detection -->
+                <div class="result-card glass-card" id="facesCard">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                        </svg>
+                        <h3>Visages & Émotions</h3>
+                        <span class="badge" id="facesCount">0</span>
+                    </div>
+                    <div id="facesContainer" class="details-grid"></div>
+                </div>
+
+                <!-- Objects Detection -->
+                <div class="result-card glass-card" id="objectsCard">
+                    <div class="card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <h3>Objets détectés</h3>
+                        <span class="badge" id="objectsCount">0</span>
+                    </div>
+                    <div id="objectsContainer" class="tags-grid"></div>
+                </div>
+
+                <div class="results-grid">
+                    <!-- Tags -->
+                    <div class="result-card glass-card">
+                        <div class="card-header">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                            <h3>Tags</h3>
+                        </div>
+                        <div class="tags-container" id="tagsContainer"></div>
+                    </div>
+
+                    <!-- Colors -->
+                    <div class="result-card glass-card">
+                        <div class="card-header">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2 a10 10 0 0 1 0 20"></path>
+                            </svg>
+                            <h3>Palette</h3>
+                        </div>
+                        <div class="colors-container" id="colorsContainer"></div>
+                    </div>
+                </div>
+                
+                <!-- Export Action -->
+                <div class="export-actions">
+                    <button class="btn-secondary" id="exportBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Exporter les données JSON
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Propulsé par <strong>Azure Cognitive Services</strong></p>
+        <p class="small">Détection de visages • Analyse d'objets • Description IA</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
