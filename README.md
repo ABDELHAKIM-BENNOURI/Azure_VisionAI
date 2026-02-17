@@ -368,4 +368,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-**Developed with Abdelhakim BENNOURI and Azure**
+**Developed by Abdelhakim BENNOURI**
